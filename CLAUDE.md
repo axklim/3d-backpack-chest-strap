@@ -61,11 +61,22 @@ uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python build123
 - **Both clips are plain extrusions along Z**, so they need no supports. The hook is a 45 degree barb for the same reason, and its tip must point up when worn. Its tip and corners are rounded in the 2D profile (`_round`): the user found the first, pointed hook too sharp. The clips are 16 mm high so the hook tip (11.8 mm) sits below the clip top; the user asked for that. The hook bar is 2.8 mm thick only at the barb and the throat, where links pass; towards the clip it widens to almost the clip depth and ends in a 45 degree ramp, because the user found the thin joint weak.
 - **The hook must work on a middle link.** A middle link's hole already holds the bars of both neighbours, so the free opening is `LINK_IN_L - 2 * WIRE` long, and the hook throat must hold two bars (the hooked link's end and the next spare link). The first version (12 x 4 links, 6 mm throat) only worked on the last link. `check.py` tests both; keep those tests when changing link or hook sizes.
 
+## Ideas for version 2
+
+Version 1 works and the user is keeping it. These are the user's notes for a next version, not tasks for now. Do not change version 1 for them unless asked. The same list is in `README.md`; keep both in step.
+
+- **Thinner clips.** The clips look a bit thick. Make the clip walls thinner (`CLIP_WALL` 2.4, `CLIP_SIDE` 3.0).
+- **A hook that does not stick out.** The hook stands out from the clip. Think about a mechanism or design with nothing sticking out.
+- **A place for the chain when it is not used.** The user often does not use the chest strap, and then the chain hangs from the left clip, which annoys them. They asked for "something smart". Options discussed, none chosen or tested:
+  - a parking clip: a second hook clip on the left strap's webbing below the buckle, so the chain runs along the strap (no new design; the parked link may bounce off the hook, so it may need mounting upside down);
+  - a parking peg on the left clip, to hook the folded chain back on (still hangs as a loop of about 11 cm);
+  - a chain that comes off completely, with a hook on both clips (nothing hangs, but the chain is easy to lose).
+
 ## Open points
 
-- `WEBBING_T` (2.0) is assumed. Measure the webbing thickness.
-- `N_LINKS` (15, taut 225 mm) is a guess. It needs the distance between the two webbing strips when the pack is worn.
+- `N_LINKS` is 18 (taut 270 mm, clips up to about 289 mm apart); the user asked for 18 without measuring the distance when worn. 18 is the most that fits the 256 mm bed in a straight line (246 mm printed); more needs the part placed diagonally. Spare links can be cut off.
 - **Test print 1 (2026-11-15):** `test-chain-only` at 0.08 mm with a 3 mm outer brim. The chain is good: the links are free and the 0.64 mm gap works. The brim came off the bed easily but left remains on the links, which makes them a bit sharp. The user wants to print without a brim.
 - **Test print 2 (2026-11-15):** `test-2-links.3mf` without a brim. It held on the plate and the user finds the result better. Print without a brim from now on. The generated 3MF loaded in Bambu Studio with its settings.
-- **Next tests, in the user's order:** `test-right-clip.3mf` first (slot fit on the webbing, hook), then `test-left-clip.3mf` (eye joint, hooking into a middle link).
-- Still untested: the clip slot fit on the webbing, the eye joint, and the hook.
+- **Test print 3 (2026-11-15):** `test-right-clip.3mf`. The right clip fits the webbing perfectly, so the slot (21 x 2.6 mm, from `WEBBING_T` = 2.0) is right. Do not change the slot. The hook is good too: the rounded tip is smooth enough and it takes a link from the test chain.
+- **Failed print (2026-11-15):** the first print of the left clip with 18 links, without a brim: one part came off the bed and the user stopped the print. Which part, and what fixed it, is not recorded (ask the user). Ideas discussed: wash the plate, print slower (Silent mode or the Speed tab), wider link feet (no bottom chamfer on the links).
+- **Result (2026-11-15):** the full strap is printed and worn; the user is happy with it. Photos are in `images/result/` (worn photos cropped so no face shows, EXIF removed: the repo is public). The eye joint holds and the hook works on a middle link. Worn, about 11 links span the chest and the spare links hang from the hook. When open, the whole chain hangs from the left clip (see "Ideas for version 2").

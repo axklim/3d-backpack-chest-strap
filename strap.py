@@ -49,7 +49,7 @@ OUTPUT = Path(__file__).parent / "output"  # STL and STEP of the two parts; trac
 TEST_PRINTS = Path(__file__).parent / "test-prints"  # test files; tracked until the strap is finished
 
 # --- chain -------------------------------------------------------------------
-N_LINKS = 15          # taut length = N_LINKS * LINK_IN_L
+N_LINKS = 18          # taut length = N_LINKS * LINK_IN_L; 18 is the most that fits the 256 mm bed in a straight line
 TEST_LINKS = 4        # short chain for the first test print
 WIRE = 2.4            # link bar width
 LINK_IN_L = 15.0      # inner length = taut pitch = one adjustment step
