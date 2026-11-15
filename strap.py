@@ -44,6 +44,7 @@ BAMBU_PRINT_OVERRIDES = {"brim_type": "no_brim"}  # the brim leaves sharp remain
 FILAMENT = 4          # AMS slot of the black PLA
 BED_XY = 256.0
 PART_GAP = 12.0       # distance between parts on the plate
+RESULT_3MF = Path(__file__).parent / "backpack-chest-strap.3mf"  # the file to print; tracked in git
 
 # --- chain -------------------------------------------------------------------
 N_LINKS = 15          # taut length = N_LINKS * LINK_IN_L
@@ -221,10 +222,10 @@ def _plate(shapes):
 
 
 def export_3mf(out=Path("out")):
-    """Bambu Studio projects: the full strap on one plate, and the test prints."""
+    """Bambu Studio projects: the full strap on one plate (RESULT_3MF), and the test prints in out/."""
     settings = json.loads(BAMBU_SETTINGS.read_text())
     plates = {
-        "strap": [
+        RESULT_3MF.stem: [
             ("left clip with chain", Compound(children=[chain_clip(), *chain_links()])),
             ("right clip with hook", hook_clip()),
         ],
@@ -233,7 +234,8 @@ def export_3mf(out=Path("out")):
         "test-left-clip": [("left clip with short chain", Compound(children=[chain_clip(), *chain_links(TEST_LINKS)]))],
     }
     for name, shapes in plates.items():
-        write_project(out / f"{name}.3mf", settings, _plate(shapes), title=name, print_overrides=BAMBU_PRINT_OVERRIDES)
+        path = RESULT_3MF if name == RESULT_3MF.stem else out / f"{name}.3mf"
+        write_project(path, settings, _plate(shapes), title=name, print_overrides=BAMBU_PRINT_OVERRIDES)
 
 
 if __name__ == "__main__":
