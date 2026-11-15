@@ -1,4 +1,4 @@
-"""Render shaded preview PNGs of the exported STLs into out/."""
+"""Render shaded preview PNGs of the exported STLs into out/ (not tracked)."""
 import sys
 from pathlib import Path
 
@@ -37,11 +37,12 @@ def render(stl, png, elev, azim, xlim=None):
 
 if __name__ == "__main__":
     out = Path("out")
-    left, right = out / "left-clip-with-chain.stl", out / "right-clip-with-hook.stl"
+    out.mkdir(exist_ok=True)
+    left, right = Path("output/left-clip-with-chain.stl"), Path("output/right-clip-with-hook.stl")
     render(left, out / "preview-left-full.png", 35, -70)
     render(left, out / "preview-left-detail.png", 30, -60, xlim=(-30, 45))
     render(left, out / "preview-chain-side.png", 4, -90, xlim=(-5, 45))
     render(right, out / "preview-right.png", 25, -110)
     render(right, out / "preview-right-side.png", 0, -90)
-    render(out / "test-chain.stl", out / "preview-test-chain.png", 35, -65)
-    render(out / "test-chain-only.stl", out / "preview-test-chain-only.png", 35, -65)
+    render(Path("test-prints/test-left-clip.stl"), out / "preview-test-left-clip.png", 35, -65)
+    render(Path("test-prints/test-chain-only.stl"), out / "preview-test-chain-only.png", 35, -65)

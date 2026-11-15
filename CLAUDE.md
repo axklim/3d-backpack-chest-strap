@@ -37,17 +37,17 @@ A 3D-printed chest strap for a backpack, made as a chain.
 
 ```sh
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python build123d trimesh matplotlib shapely   # once
-.venv/bin/python strap.py    # export STL + STEP + Bambu Studio 3MF projects to out/ (full left part, right clip, test-chain: left clip + 4 links, test-chain-only: 4 links, test-2-links: 2 links)
+.venv/bin/python strap.py    # writes backpack-chest-strap.3mf, output/ (STL + STEP of both parts) and test-prints/
 .venv/bin/python check.py    # every part is one solid, neighbour links keep >= 0.4 mm gap
 .venv/bin/python render.py   # preview PNGs in out/ (look at them after every geometry change)
 .venv/bin/python drawing.py  # dimensioned drawings of both clips in docs/drawings/ (tracked; rerun after a size change)
 ```
 
-**`backpack-chest-strap.3mf` in the repo root is the result: the Bambu Studio project to print** (both parts on one plate, all settings inside). It is tracked on purpose, so a second copy can be printed without running anything. `strap.py` regenerates it; commit it together with every model change. The user counts this file and photos of the printed strap as the result of the project; their other `3d-*` repos keep such photos in `images/result/`. The `out/test-*.3mf` files (two links, right clip alone, left clip with 4 links) are generated test prints and are not tracked. `bambu3mf.py` writes them; it is a copy from the user's `3d-box-for-plastic-bags` repo, and that repo's `docs/bambu-3mf-format.md` lists the format rules. `bambu/project_settings.config` holds the print settings exactly as Bambu Studio saved them in `test-chain-only.3mf`; `BAMBU_PRINT_OVERRIDES` in `strap.py` goes on top (currently no brim). Bambu Studio is not installed on this Mac, so a generated 3MF can only be checked by reading the file, not by loading or slicing it.
+**`backpack-chest-strap.3mf` in the repo root is the result: the Bambu Studio project to print** (both parts on one plate, all settings inside). It is tracked on purpose, so a second copy can be printed without running anything. `strap.py` regenerates it; commit it together with every model change. The user counts this file and photos of the printed strap as the result of the project; their other `3d-*` repos keep such photos in `images/result/`. `output/` holds the STL and STEP of the two parts and is tracked, like in the user's other `3d-*` repos. `test-prints/` holds the generated test pieces as 3MF and STL (two links, four links, right clip alone, left clip with 4 links). They are tracked only so they stay in the git history. **When the strap is finished, delete `test-prints/`, `bambu/test-chain-only.3mf` and the test exports in `strap.py`**; the user asked for this. `bambu3mf.py` writes them; it is a copy from the user's `3d-box-for-plastic-bags` repo, and that repo's `docs/bambu-3mf-format.md` lists the format rules. `bambu/project_settings.config` holds the print settings exactly as Bambu Studio saved them in `test-chain-only.3mf`; `BAMBU_PRINT_OVERRIDES` in `strap.py` goes on top (currently no brim). Bambu Studio is not installed on this Mac, so a generated 3MF can only be checked by reading the file, not by loading or slicing it.
 
 `bambu/test-chain-only.3mf` is the Bambu Studio project the user saved for the first test print, kept as the source of `bambu/project_settings.config` (4 links, the settings below, black on slot 4). Its geometry is a copy: it does not update when `strap.py` changes.
 
-`out/` and `.venv/` are not in git. The user works on another device: copy STL files to `~/Share` for them, never overwrite there, add `-1`, `-2` to the name instead.
+`out/` (preview images) and `.venv/` are not in git. The user works on another device: copy STL files to `~/Share` for them, never overwrite there, add `-1`, `-2` to the name instead.
 
 ## How the model works
 

@@ -45,6 +45,8 @@ FILAMENT = 4          # AMS slot of the black PLA
 BED_XY = 256.0
 PART_GAP = 12.0       # distance between parts on the plate
 RESULT_3MF = Path(__file__).parent / "backpack-chest-strap.3mf"  # the file to print; tracked in git
+OUTPUT = Path(__file__).parent / "output"  # STL and STEP of the two parts; tracked in git
+TEST_PRINTS = Path(__file__).parent / "test-prints"  # test files; tracked until the strap is finished
 
 # --- chain -------------------------------------------------------------------
 N_LINKS = 15          # taut length = N_LINKS * LINK_IN_L
@@ -190,22 +192,23 @@ def build():
     return {"chain_clip": chain_clip(), "links": chain_links(), "hook_clip": hook_clip()}
 
 
-def export(out=Path("out")):
-    out.mkdir(exist_ok=True)
-    parts = build()
-    left = Compound(children=[parts["chain_clip"], *parts["links"]])
-    # fresh shapes: a shape can have only one parent compound
-    test = Compound(children=[chain_clip(), *chain_links(TEST_LINKS)])
-    test_links = Compound(children=chain_links(TEST_LINKS))
-    shapes = (
-        ("left-clip-with-chain", left), ("right-clip-with-hook", parts["hook_clip"]),
-        ("test-chain", test), ("test-chain-only", test_links),
-        ("test-2-links", Compound(children=chain_links(2))),
+def export():
+    """STL and STEP of the two parts to OUTPUT, STL of the test pieces to TEST_PRINTS."""
+    OUTPUT.mkdir(exist_ok=True)
+    TEST_PRINTS.mkdir(exist_ok=True)
+    # fresh shapes for every compound: a shape can have only one parent compound
+    parts = (
+        (OUTPUT / "left-clip-with-chain", Compound(children=[chain_clip(), *chain_links()])),
+        (OUTPUT / "right-clip-with-hook", hook_clip()),
+        (TEST_PRINTS / "test-left-clip", Compound(children=[chain_clip(), *chain_links(TEST_LINKS)])),
+        (TEST_PRINTS / "test-right-clip", hook_clip()),
+        (TEST_PRINTS / "test-chain-only", Compound(children=chain_links(TEST_LINKS))),
+        (TEST_PRINTS / "test-2-links", Compound(children=chain_links(2))),
     )
-    for name, shape in shapes:
-        export_stl(shape, str(out / f"{name}.stl"), tolerance=0.01, angular_tolerance=0.1)
-        export_step(shape, str(out / f"{name}.step"))
-    return parts
+    for path, shape in parts:
+        export_stl(shape, f"{path}.stl", tolerance=0.01, angular_tolerance=0.1)
+        if path.parent == OUTPUT:
+            export_step(shape, f"{path}.step")
 
 
 def _plate(shapes):
@@ -221,8 +224,8 @@ def _plate(shapes):
     return objects
 
 
-def export_3mf(out=Path("out")):
-    """Bambu Studio projects: the full strap on one plate (RESULT_3MF), and the test prints in out/."""
+def export_3mf(out=TEST_PRINTS):
+    """Bambu Studio projects: the full strap on one plate (RESULT_3MF), and the test prints."""
     settings = json.loads(BAMBU_SETTINGS.read_text())
     plates = {
         RESULT_3MF.stem: [
