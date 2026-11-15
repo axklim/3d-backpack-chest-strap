@@ -46,11 +46,9 @@ BED_XY = 256.0
 PART_GAP = 12.0       # distance between parts on the plate
 RESULT_3MF = Path(__file__).parent / "backpack-chest-strap.3mf"  # the file to print; tracked in git
 OUTPUT = Path(__file__).parent / "output"  # STL and STEP of the two parts; tracked in git
-TEST_PRINTS = Path(__file__).parent / "test-prints"  # test files; tracked until the strap is finished
 
 # --- chain -------------------------------------------------------------------
 N_LINKS = 18          # taut length = N_LINKS * LINK_IN_L; 18 is the most that fits the 256 mm bed in a straight line
-TEST_LINKS = 4        # short chain for the first test print
 WIRE = 2.4            # link bar width
 LINK_IN_L = 15.0      # inner length = taut pitch = one adjustment step
 LINK_IN_W = 5.0       # inner width of a flat link
@@ -193,22 +191,16 @@ def build():
 
 
 def export():
-    """STL and STEP of the two parts to OUTPUT, STL of the test pieces to TEST_PRINTS."""
+    """STL and STEP of the two parts to OUTPUT."""
     OUTPUT.mkdir(exist_ok=True)
-    TEST_PRINTS.mkdir(exist_ok=True)
     # fresh shapes for every compound: a shape can have only one parent compound
     parts = (
         (OUTPUT / "left-clip-with-chain", Compound(children=[chain_clip(), *chain_links()])),
         (OUTPUT / "right-clip-with-hook", hook_clip()),
-        (TEST_PRINTS / "test-left-clip", Compound(children=[chain_clip(), *chain_links(TEST_LINKS)])),
-        (TEST_PRINTS / "test-right-clip", hook_clip()),
-        (TEST_PRINTS / "test-chain-only", Compound(children=chain_links(TEST_LINKS))),
-        (TEST_PRINTS / "test-2-links", Compound(children=chain_links(2))),
     )
     for path, shape in parts:
         export_stl(shape, f"{path}.stl", tolerance=0.01, angular_tolerance=0.1)
-        if path.parent == OUTPUT:
-            export_step(shape, f"{path}.step")
+        export_step(shape, f"{path}.step")
 
 
 def _plate(shapes):
@@ -224,21 +216,14 @@ def _plate(shapes):
     return objects
 
 
-def export_3mf(out=TEST_PRINTS):
-    """Bambu Studio projects: the full strap on one plate (RESULT_3MF), and the test prints."""
+def export_3mf():
+    """The Bambu Studio project: the full strap on one plate (RESULT_3MF)."""
     settings = json.loads(BAMBU_SETTINGS.read_text())
-    plates = {
-        RESULT_3MF.stem: [
-            ("left clip with chain", Compound(children=[chain_clip(), *chain_links()])),
-            ("right clip with hook", hook_clip()),
-        ],
-        "test-2-links": [("two links", Compound(children=chain_links(2)))],
-        "test-right-clip": [("right clip with hook", hook_clip())],
-        "test-left-clip": [("left clip with short chain", Compound(children=[chain_clip(), *chain_links(TEST_LINKS)]))],
-    }
-    for name, shapes in plates.items():
-        path = RESULT_3MF if name == RESULT_3MF.stem else out / f"{name}.3mf"
-        write_project(path, settings, _plate(shapes), title=name, print_overrides=BAMBU_PRINT_OVERRIDES)
+    shapes = [
+        ("left clip with chain", Compound(children=[chain_clip(), *chain_links()])),
+        ("right clip with hook", hook_clip()),
+    ]
+    write_project(RESULT_3MF, settings, _plate(shapes), title=RESULT_3MF.stem, print_overrides=BAMBU_PRINT_OVERRIDES)
 
 
 if __name__ == "__main__":

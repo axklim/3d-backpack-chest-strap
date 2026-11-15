@@ -14,6 +14,8 @@ More photos are in `images/result/`.
 
 Open `backpack-chest-strap.3mf` in Bambu Studio and print. The settings are inside: Bambu Lab P1S, 0.4 mm nozzle, PLA Basic, 0.08 mm layers, no brim, no supports.
 
+Clean the plate and print slowly (for example the "Silent" speed on the printer). At normal speed a part came off the bed. The slower print takes about 20% longer.
+
 `output/` has the two parts as STL and STEP for other slicers. Drawings with sizes are in `docs/drawings/`.
 
 ## Ideas for version 2

@@ -30,22 +30,20 @@ A 3D-printed chest strap for a backpack, made as a chain.
 ## Printer and print settings
 
 - Bambu Lab P1S, 0.4 mm nozzle (the default one: flow type Standard, not High Flow), AMS, textured PEI plate, Bambu Studio. Same setup as the user's other `3d-*` repos (github.com/axklim: `3d-door-handle`, `3d-box-for-plastic-bags`, `3d-skull-brush`); the box repo has `bambu3mf.py`, which writes a Bambu Studio project 3MF from build123d shapes.
-- 0.08 mm Extra Fine profile (the user wants the finest layers), first layer 0.20 mm (preset default), 3 wall loops, 100% infill, supports off, no brim. `LAYER` and `FIRST_LAYER` in `strap.py` must match the slicer: every Z level of the chain is snapped to a layer boundary, so the slicer does not round a gap smaller. `check.py` tests this.
+- 0.08 mm Extra Fine profile (the user wants the finest layers), first layer 0.20 mm (preset default), 3 wall loops, 100% infill, supports off, no brim. Print the long chain slowly (see the failed print in the log below). `LAYER` and `FIRST_LAYER` in `strap.py` must match the slicer: every Z level of the chain is snapped to a layer boundary, so the slicer does not round a gap smaller. `check.py` tests this.
 - Load each STL as one object. Do not split it into objects or parts: the links would lose their linked positions.
 
 ## Commands
 
 ```sh
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python build123d trimesh matplotlib shapely   # once
-.venv/bin/python strap.py    # writes backpack-chest-strap.3mf, output/ (STL + STEP of both parts) and test-prints/
+.venv/bin/python strap.py    # writes backpack-chest-strap.3mf and output/ (STL + STEP of both parts)
 .venv/bin/python check.py    # every part is one solid, neighbour links keep >= 0.4 mm gap
 .venv/bin/python render.py   # preview PNGs in out/ (look at them after every geometry change)
 .venv/bin/python drawing.py  # dimensioned drawings of both clips in docs/drawings/ (tracked; rerun after a size change)
 ```
 
-**`backpack-chest-strap.3mf` in the repo root is the result: the Bambu Studio project to print** (both parts on one plate, all settings inside). It is tracked on purpose, so a second copy can be printed without running anything. `strap.py` regenerates it; commit it together with every model change. The user counts this file and photos of the printed strap as the result of the project; their other `3d-*` repos keep such photos in `images/result/`. `output/` holds the STL and STEP of the two parts and is tracked, like in the user's other `3d-*` repos. `test-prints/` holds the generated test pieces as 3MF and STL (two links, four links, right clip alone, left clip with 4 links). They are tracked only so they stay in the git history. **When the strap is finished, delete `test-prints/`, `bambu/test-chain-only.3mf` and the test exports in `strap.py`**; the user asked for this. `bambu3mf.py` writes them; it is a copy from the user's `3d-box-for-plastic-bags` repo, and that repo's `docs/bambu-3mf-format.md` lists the format rules. `bambu/project_settings.config` holds the print settings exactly as Bambu Studio saved them in `test-chain-only.3mf`; `BAMBU_PRINT_OVERRIDES` in `strap.py` goes on top (currently no brim). Bambu Studio is not installed on this Mac, so a generated 3MF can only be checked by reading the file, not by loading or slicing it.
-
-`bambu/test-chain-only.3mf` is the Bambu Studio project the user saved for the first test print, kept as the source of `bambu/project_settings.config` (4 links, the settings below, black on slot 4). Its geometry is a copy: it does not update when `strap.py` changes.
+**`backpack-chest-strap.3mf` in the repo root is the result: the Bambu Studio project to print** (both parts on one plate, all settings inside). It is tracked on purpose, so a second copy can be printed without running anything. `strap.py` regenerates it; commit it together with every model change. The user counts this file and photos of the printed strap as the result of the project; their other `3d-*` repos keep such photos in `images/result/`. `output/` holds the STL and STEP of the two parts and is tracked, like in the user's other `3d-*` repos. The test pieces (`test-prints/`, `bambu/test-chain-only.3mf`, the test exports in `strap.py`) were removed when the strap was finished, as the user asked; they are in the git history (commit `ed7ca33` and before). `bambu3mf.py` writes the 3MF; it is a copy from the user's `3d-box-for-plastic-bags` repo, and that repo's `docs/bambu-3mf-format.md` lists the format rules. `bambu/project_settings.config` holds the print settings exactly as Bambu Studio saved them in the user's first test project; `BAMBU_PRINT_OVERRIDES` in `strap.py` goes on top (currently no brim). Bambu Studio is not installed on this Mac, so a generated 3MF can only be checked by reading the file, not by loading or slicing it.
 
 `out/` (preview images) and `.venv/` are not in git. The user works on another device: copy STL files to `~/Share` for them, never overwrite there, add `-1`, `-2` to the name instead.
 
@@ -72,11 +70,13 @@ Version 1 works and the user is keeping it. These are the user's notes for a nex
   - a parking peg on the left clip, to hook the folded chain back on (still hangs as a loop of about 11 cm);
   - a chain that comes off completely, with a hook on both clips (nothing hangs, but the chain is easy to lose).
 
-## Open points
+## Print log and notes
+
+**The project is finished (2026-11-15).** Version 1 is printed and in use; the user went on a hike to test it.
 
 - `N_LINKS` is 18 (taut 270 mm, clips up to about 289 mm apart); the user asked for 18 without measuring the distance when worn. 18 is the most that fits the 256 mm bed in a straight line (246 mm printed); more needs the part placed diagonally. Spare links can be cut off.
 - **Test print 1 (2026-11-15):** `test-chain-only` at 0.08 mm with a 3 mm outer brim. The chain is good: the links are free and the 0.64 mm gap works. The brim came off the bed easily but left remains on the links, which makes them a bit sharp. The user wants to print without a brim.
 - **Test print 2 (2026-11-15):** `test-2-links.3mf` without a brim. It held on the plate and the user finds the result better. Print without a brim from now on. The generated 3MF loaded in Bambu Studio with its settings.
 - **Test print 3 (2026-11-15):** `test-right-clip.3mf`. The right clip fits the webbing perfectly, so the slot (21 x 2.6 mm, from `WEBBING_T` = 2.0) is right. Do not change the slot. The hook is good too: the rounded tip is smooth enough and it takes a link from the test chain.
-- **Failed print (2026-11-15):** the first print of the left clip with 18 links, without a brim: one part came off the bed and the user stopped the print. Which part, and what fixed it, is not recorded (ask the user). Ideas discussed: wash the plate, print slower (Silent mode or the Speed tab), wider link feet (no bottom chamfer on the links).
+- **Failed print (2026-11-15):** the first print of the left clip with 18 links, without a brim: one part came off the bed and the user stopped the print. The second try worked: the user washed the plate and reduced the print speed, and thinks the lower speed is what helped. It added about 20% to the print time (about 1 h 05 min at normal speed). The slower speed is not in `backpack-chest-strap.3mf`: set it by hand (printer speed "Silent", or the Speed tab in Bambu Studio, which needs the "Advanced" switch on).
 - **Result (2026-11-15):** the full strap is printed and worn; the user is happy with it. Photos are in `images/result/` (worn photos cropped so no face shows, EXIF removed: the repo is public). The eye joint holds and the hook works on a middle link. Worn, about 11 links span the chest and the spare links hang from the hook. When open, the whole chain hangs from the left clip (see "Ideas for version 2").

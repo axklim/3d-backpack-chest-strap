@@ -44,5 +44,3 @@ if __name__ == "__main__":
     render(left, out / "preview-chain-side.png", 4, -90, xlim=(-5, 45))
     render(right, out / "preview-right.png", 25, -110)
     render(right, out / "preview-right-side.png", 0, -90)
-    render(Path("test-prints/test-left-clip.stl"), out / "preview-test-left-clip.png", 35, -65)
-    render(Path("test-prints/test-chain-only.stl"), out / "preview-test-chain-only.png", 35, -65)
